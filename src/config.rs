@@ -20,6 +20,12 @@ use std::{
 use structopt::StructOpt;
 use unwrap::unwrap;
 
+/// Network name (to prevent mixing up nodes from different networks)
+/// TODO:
+/// - Allow configuring with a parameter
+/// - Add a node name
+pub const NETWORK_NAME: &str = "Community02.net";
+
 /// QuicP2p configurations
 #[derive(Clone, Debug, Default, Serialize, Deserialize, Eq, PartialEq, StructOpt)]
 #[structopt(rename_all = "kebab-case")]
@@ -121,7 +127,7 @@ impl SerialisableCertificate {
 impl Default for SerialisableCertificate {
     fn default() -> Self {
         let cert = unwrap!(rcgen::generate_simple_self_signed(vec![
-            "MaidSAFE.net".to_string()
+            NETWORK_NAME.to_string()
         ]));
 
         Self {

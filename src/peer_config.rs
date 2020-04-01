@@ -8,6 +8,7 @@
 // Software.
 
 use crate::QuicP2pError;
+use crate::config;
 use crate::R;
 use std::sync::Arc;
 use std::time::Duration;
@@ -86,14 +87,34 @@ impl SkipServerVerification {
     }
 }
 
+/// Only checks that certificate is valid for DNS entry corresponding to network name
+/// but doesn't check that it is:
+/// - Signed by a trusted `RootCertStore` CA
+/// - Not Expired
+/// - OCSP data is present
+/// This is done for both nodes and clients (in the safe meaning) which forces also a safe_browser/safe_api fork
+/// (in addition to safe_vault)
 impl rustls::ServerCertVerifier for SkipServerVerification {
     fn verify_server_cert(
         &self,
         _roots: &rustls::RootCertStore,
-        _presented_certs: &[rustls::Certificate],
+        presented_certs: &[rustls::Certificate],
         _dns_name: webpki::DNSNameRef,
         _ocsp_response: &[u8],
     ) -> Result<rustls::ServerCertVerified, rustls::TLSError> {
-        Ok(rustls::ServerCertVerified::assertion())
+        // Only one certificate allowed (the one created with SerialisableCertificate::default())
+        if presented_certs.len() != 1 {
+            return Err(rustls::TLSError::NoCertificatesPresented);
+        }
+        let cert = &presented_certs[0];
+        // Another possibility would be to pass network name to client config (in the rustls meaning)
+        // and use dns_name passed as input
+        let dns_name = webpki::DNSNameRef::try_from_ascii_str(config::NETWORK_NAME).unwrap();
+        match webpki::EndEntityCert::from(&cert.0) {
+            Ok(cert) => cert.verify_is_valid_for_dns_name(dns_name)
+                            .map_err(rustls::TLSError::WebPKIError)
+                            .map(|_| rustls::ServerCertVerified::assertion()),
+            Err(err) => Err(rustls::TLSError::PeerIncompatibleError(err.to_string()))
+        }
     }
 }
