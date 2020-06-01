@@ -7,6 +7,7 @@
 // specific language governing permissions and limitations relating to use of the SAFE Network
 // Software.
 
+use crate::config::NETWORK_NAME;
 use crate::error::QuicP2pError;
 use crate::utils::R;
 use log::{debug, info, warn};
@@ -67,7 +68,7 @@ pub(crate) async fn add_port(local_addr: SocketAddr, lease_duration: u32) -> R<S
                 igd::PortMappingProtocol::UDP,
                 socket_addr,
                 lease_duration,
-                "MaidSafe.net",
+                NETWORK_NAME,
             )
             .await?;
 
@@ -95,7 +96,7 @@ pub(crate) async fn renew_port(
                 ext_port,
                 socket_addr,
                 lease_duration,
-                "MaidSafe.net",
+                NETWORK_NAME,
             )
             .await
             .map_err(QuicP2pError::IgdRenewPort)?;

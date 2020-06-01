@@ -7,7 +7,7 @@
 // specific language governing permissions and limitations relating to use of the SAFE Network
 // Software.
 
-use crate::config::OurType;
+use crate::config::{OurType, NETWORK_NAME};
 use crate::connection::{
     BootstrapGroupMaker, BootstrapGroupRef, Connection, FromPeer, QConn, ToPeer,
 };
@@ -72,7 +72,7 @@ pub fn connect_to(
 
             let connecting =
                 c.quic_ep()
-                    .connect_with(c.quic_client_cfg.clone(), &node_addr, "MaidSAFE.net")?;
+                    .connect_with(c.quic_client_cfg.clone(), &node_addr, NETWORK_NAME)?;
 
             let _ = tokio::spawn(async move {
                 select! {
