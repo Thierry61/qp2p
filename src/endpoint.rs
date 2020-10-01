@@ -16,8 +16,8 @@ use log::trace;
 use std::{net::SocketAddr, sync::Arc};
 
 /// Host name of the Quic communication certificate used by peers
-// FIXME: make it configurable
-const CERT_SERVER_NAME: &str = "MaidSAFE.net";
+// FIXME: make it configurable + Add a node name
+pub const CERT_SERVER_NAME: &str = "Community03.net";
 
 /// Endpoint instance which can be used to create connections to peers,
 /// and listen to incoming messages from other peers.

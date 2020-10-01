@@ -10,6 +10,7 @@
 #![allow(unused)]
 
 use crate::error::{Error, Result};
+use crate::endpoint::CERT_SERVER_NAME;
 use log::{debug, info, warn};
 use std::net::{IpAddr, SocketAddr, SocketAddrV4};
 use std::time::Duration;
@@ -68,7 +69,7 @@ pub(crate) async fn add_port(local_addr: SocketAddr, lease_duration: u32) -> Res
                 igd::PortMappingProtocol::UDP,
                 socket_addr,
                 lease_duration,
-                "MaidSafe.net",
+                CERT_SERVER_NAME,
             )
             .await?;
 
@@ -96,7 +97,7 @@ pub(crate) async fn renew_port(
                 ext_port,
                 socket_addr,
                 lease_duration,
-                "MaidSafe.net",
+                CERT_SERVER_NAME,
             )
             .await
             .map_err(Error::IgdRenewPort)?;

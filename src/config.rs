@@ -9,6 +9,7 @@
 
 use crate::{
     dirs::Dirs,
+    endpoint::CERT_SERVER_NAME,
     error::{Error, Result},
     utils,
 };
@@ -118,7 +119,7 @@ impl SerialisableCertificate {
 impl Default for SerialisableCertificate {
     fn default() -> Self {
         let cert = unwrap!(rcgen::generate_simple_self_signed(vec![
-            "MaidSAFE.net".to_string()
+            CERT_SERVER_NAME.to_string()
         ]));
 
         Self {

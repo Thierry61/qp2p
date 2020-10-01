@@ -6,7 +6,7 @@
 
 name: Merge Version Change and Dependabot PRs automatically
 
-on: pull_request
+#on: pull_request
 
 jobs:
   merge:
